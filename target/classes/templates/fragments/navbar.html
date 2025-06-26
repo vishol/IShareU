@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+    <div th:fragment="navbar">
+        <!-- User Navbar - Show for authenticated users on non-admin pages -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4" sec:authorize="isAuthenticated() and !hasRole('ADMIN')">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" th:href="@{/}">
+                    <img src="/ishareu_logo.jpg" alt="IShareU Logo" style="width:50px;height:24px;margin-right:0.5rem;vertical-align:middle;"/>                    
+                    IshareU
+                </a>
+                <div class="d-flex align-items-center ms-auto">
+                    <a th:href="@{/dashboard}" class="btn btn-primary btn-sm rounded-pill ms-1 px-2 py-1" style="font-size: 0.75rem; white-space: nowrap;">
+                        <i class="bi bi-speedometer2" style="font-size: 0.7rem;"></i>
+                        <span class="d-none d-md-inline ms-1">Dashboard</span>
+                    </a>
+                    <a th:href="@{/file/upload}" class="btn btn-primary btn-sm rounded-pill ms-1 px-2 py-1" style="font-size: 0.75rem; white-space: nowrap;">
+                        <i class="bi bi-cloud-upload" style="font-size: 0.7rem;"></i>
+                        <span class="d-none d-md-inline ms-1">Upload</span>
+                    </a>
+                    <a th:href="@{/user/details}" class="btn btn-primary btn-sm rounded-pill ms-1 px-2 py-1" style="font-size: 0.75rem; white-space: nowrap;">
+                        <i class="bi bi-person-circle" style="font-size: 0.7rem;"></i>
+                        <span class="d-none d-md-inline ms-1">My Account</span>
+                    </a>
+                    <a th:href="@{/logout}" class="btn btn-primary btn-sm rounded-pill ms-1 px-2 py-1" style="font-size: 0.75rem; white-space: nowrap;">
+                        <i class="bi bi-box-arrow-right" style="font-size: 0.7rem;"></i>
+                        <span class="d-none d-md-inline ms-1">Logout</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+        <!-- Admin Navbar - Show for authenticated users who are admins -->
+        <nav class="navbar navbar-expand-lg admin-navbar mb-4" sec:authorize="isAuthenticated() and hasRole('ADMIN')">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" th:href="@{/admin/dashboard}">
+                    <img src="/ishareu_logo.jpg" alt="IShareU Logo" style="width:24px;height:24px;margin-right:0.5rem;vertical-align:middle;"/>
+                     <span class="ms-2 text-muted small">Admin</span>
+                </a>
+                <div class="d-flex align-items-center ms-auto">
+                    <a th:href="@{/admin/users}" class="btn btn-secondary btn-sm rounded-pill ms-1 px-2 py-1" style="font-size: 0.75rem; white-space: nowrap;">
+                        <i class="bi bi-people" style="font-size: 0.7rem;"></i>
+                        <span class="d-none d-md-inline ms-1">Users</span>
+                    </a>
+                    <a th:href="@{/admin/files}" class="btn btn-primary btn-sm rounded-pill ms-1 px-2 py-1" style="font-size: 0.75rem; white-space: nowrap;">
+                        <i class="bi bi-folder2-open" style="font-size: 0.7rem;"></i>
+                        <span class="d-none d-md-inline ms-1">Files</span>
+                    </a>
+                    <a th:href="@{/logout}" class="btn btn-primary btn-sm rounded-pill ms-1 px-2 py-1" style="font-size: 0.75rem; white-space: nowrap;">
+                        <i class="bi bi-box-arrow-right" style="font-size: 0.7rem;"></i>
+                        <span class="d-none d-md-inline ms-1">Logout</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+        <!-- Anonymous User Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4" sec:authorize="isAnonymous()">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold" th:href="@{/}">
+                    <img src="/ishareu_logo.jpg" alt="IShareU Logo" style="width:24px;height:24px;margin-right:0.5rem;vertical-align:middle;"/>
+                    IShareU
+                </a>
+                <div class="d-flex align-items-center ms-auto">
+                    <a th:href="@{/login}" class="btn btn-link btn-sm ms-1" style="font-size: 0.75rem;">Login</a>
+                    <a th:href="@{/signup}" class="btn btn-primary btn-sm ms-1" style="font-size: 0.75rem;">Sign up</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+        
+</body>
+</html> 

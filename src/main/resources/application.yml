@@ -1,0 +1,67 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true&prepareThreshold=0
+    username: postgres.oabolgvcloamohipyexb
+    password: Password1981$
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
+  
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+
+supabase:
+  storage:
+    url: https://oabolgvcloamohipyexb.supabase.co/storage/v1
+    api-key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hYm9sZ3ZjbG9hbW9oaXB5ZXhiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MDgyMzAyMCwiZXhwIjoyMDY2Mzk5MDIwfQ.Ag_r3f4Blgt8__8SvXhyerhhL7QGj4iPzlIpkh2k7Tw
+    service-role-key: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9hYm9sZ3ZjbG9hbW9oaXB5ZXhiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1MDgyMzAyMCwiZXhwIjoyMDY2Mzk5MDIwfQ.Ag_r3f4Blgt8__8SvXhyerhhL7QGj4iPzlIpkh2k7Tw
+    bucket: files
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.filesharing: DEBUG
+    org.springframework.web: DEBUG
+
+allowedFileTypes:
+  - pdf
+  - docx
+  - png
+  - jpg
+  - jpeg
+  - gif
+  - zip
+  - txt
+  - csv
+  - xlsx
+  - pptx
+  - mp4
+  - mp3
+  - webm
+  - svg
+  - json
+  - xml 

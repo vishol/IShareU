@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - IShareU</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/jpeg" href="/ishareu_logo.jpg">
+    <style>
+        body {
+            background: #f8fafc;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        
+        .account-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .account-avatar {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .account-title {
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .account-subtitle {
+            opacity: 0.9;
+            font-weight: 400;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: none;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        .info-card-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1.5rem;
+        }
+        
+        .info-card-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: #64748b;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .info-value {
+            color: #1e293b;
+            font-weight: 500;
+        }
+        
+        .files-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: none;
+            overflow: hidden;
+        }
+        
+        .files-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .files-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border: none;
+            font-weight: 500;
+        }
+        
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        }
+        
+        .table {
+            margin: 0;
+        }
+        
+        .table th {
+            background: #f8fafc;
+            color: #475569;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 1rem;
+        }
+        
+        .table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+        
+        .btn-outline-secondary {
+            border-color: #cbd5e1;
+            color: #64748b;
+        }
+        
+        .btn-outline-secondary:hover {
+            background: #64748b;
+            border-color: #64748b;
+        }
+        
+        .btn-outline-primary {
+            border-color: #667eea;
+            color: #667eea;
+        }
+        
+        .btn-outline-primary:hover {
+            background: #667eea;
+            border-color: #667eea;
+        }
+        
+        .btn-outline-danger {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        .btn-outline-danger:hover {
+            background: #ef4444;
+            border-color: #ef4444;
+        }
+        
+        .pagination .page-link {
+            border: none;
+            color: #64748b;
+            padding: 0.5rem 0.75rem;
+            margin: 0 0.125rem;
+            border-radius: 8px;
+        }
+        
+        .pagination .page-link:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #64748b;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            .account-header {
+                padding: 2rem 0;
+            }
+            
+            .account-title {
+                font-size: 1.5rem;
+            }
+            
+            .info-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .info-label {
+                min-width: auto;
+            }
+            
+            .files-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar.html :: user-navbar}"></div>
+    
+    <!-- Account Header -->
+    <div class="account-header">
+        <div class="container">
+            <div class="text-center">
+                <div class="account-avatar">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <h1 class="account-title">My Account</h1>
+                <p class="account-subtitle">Manage your profile and files</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Account Information -->
+        <div class="info-card">
+            <div class="info-card-header">
+                <h3 class="info-card-title">
+                    <i class="bi bi-person-badge"></i>
+                    Account Information
+                </h3>
+            </div>
+            <div class="info-item">
+                <div class="info-label">
+                    <i class="bi bi-person"></i>
+                    Username
+                </div>
+                <div class="info-value" th:text="${user.username}"></div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">
+                    <i class="bi bi-envelope"></i>
+                    Email
+                </div>
+                <div class="info-value" th:text="${user.email}"></div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">
+                    <i class="bi bi-calendar-check"></i>
+                    Member Since
+                </div>
+                <div class="info-value" th:text="${#temporals.format(user.createdAt, 'MMMM dd, yyyy')}"></div>
+            </div>
+        </div>
+        
+        <!-- Files Section -->
+        <div class="files-card">
+            <div class="files-header">
+                <h3 class="files-title">
+                    <i class="bi bi-folder2-open"></i>
+                    My Uploaded Files
+                </h3>
+                <form th:action="@{/file/delete/all}" method="post" th:onsubmit="return confirm('Are you sure you want to delete all your uploaded files? This action cannot be undone.');" class="mb-0">
+                    <button type="submit" class="btn btn-danger btn-sm">
+                        <i class="bi bi-trash"></i> Delete All Files
+                    </button>
+                </form>
+            </div>
+            
+            <div th:if="${filePage != null and filePage.totalElements > 0}">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>File Name</th>
+                                <th>Download Link</th>
+                                <th>Expires</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="file : ${filePage.content}">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-file-earmark me-2 text-primary"></i>
+                                        <span th:text="${file.originalFilename}"></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a th:href="@{'/file/download/' + ${file.uniqueLink}}" target="_blank" class="btn btn-outline-secondary btn-sm">
+                                        <i class="bi bi-download"></i> Download
+                                    </a>
+                                </td>
+                                <td>
+                                    <span th:if="${file.expiryDate != null}" th:text="${#temporals.format(file.expiryDate, 'MMM dd, yyyy')}"></span>
+                                    <span th:if="${file.expiryDate == null}" class="text-muted">No expiry</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-1">
+                                        <a th:href="@{'/file/edit/' + ${file.id}}" class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form th:action="@{'/file/delete/' + ${file.id}}" method="post" th:onsubmit="return confirm('Are you sure you want to delete this file?');" style="display:inline;">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <nav th:if="${filePage.totalPages > 1}" class="p-3 border-top">
+                    <ul class="pagination justify-content-center mb-2">
+                        <li class="page-item" th:classappend="${filePage.first} ? 'disabled'">
+                            <a class="page-link" th:href="@{'/user/details'(page=${filePage.number - 1},size=${filePage.size})}">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, filePage.totalPages - 1)}"
+                            th:classappend="${i == filePage.number} ? 'active'">
+                            <a class="page-link" th:href="@{'/user/details'(page=${i},size=${filePage.size})}" th:text="${i + 1}"></a>
+                        </li>
+                        <li class="page-item" th:classappend="${filePage.last} ? 'disabled'">
+                            <a class="page-link" th:href="@{'/user/details'(page=${filePage.number + 1},size=${filePage.size})}">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="text-center text-muted small">
+                        Showing <span th:text="${filePage.number * filePage.size + 1}"></span> -
+                        <span th:text="${filePage.number * filePage.size + filePage.numberOfElements}"></span>
+                        of <span th:text="${filePage.totalElements}"></span> files
+                    </div>
+                </nav>
+            </div>
+            
+            <div th:if="${filePage == null or filePage.totalElements == 0}">
+                <div class="empty-state">
+                    <i class="bi bi-folder2"></i>
+                    <h4>No files uploaded yet</h4>
+                    <p class="mb-0">Start sharing files by uploading your first document.</p>
+                    <a th:href="@{/file/upload}" class="btn btn-primary mt-3">
+                        <i class="bi bi-cloud-upload"></i> Upload Your First File
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

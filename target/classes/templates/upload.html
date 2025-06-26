@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File - File Sharing</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/jpeg" href="/ishareu_logo.jpg">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        .upload-area {
+            border: 2px dashed #764ba2;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            background-color: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .upload-area:hover {
+            border-color: #667eea;
+            background-color: #e9ecef;
+        }
+        .upload-area.dragover {
+            border-color: #28a745;
+            background-color: #d4edda;
+        }
+        .file-info {
+            display: none;
+            margin-top: 15px;
+        }
+        .progress {
+            display: none;
+            margin-top: 15px;
+        }
+        .card, .card-header {
+            border-radius: 18px !important;
+        }
+        .card {
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        }
+        .card-header {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-weight: 600;
+            border-bottom: none;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #764ba2 0%, #667eea 100%);
+        }
+        @media (max-width: 576px) {
+            .upload-area {
+                padding: 18px;
+                font-size: 1rem;
+            }
+            .file-info {
+                font-size: 0.95rem;
+            }
+            .card {
+                padding: 0.5rem;
+            }
+            .btn, .btn-lg {
+                font-size: 1rem;
+                padding: 0.75rem 1rem;
+            }
+        }
+        .file-info {
+            transition: opacity 0.3s;
+        }
+        .progress {
+            transition: opacity 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar.html :: navbar}"></div>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="bi bi-cloud-upload me-2"></i>Upload File
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/file/upload}" th:object="${uploadRequest}" method="post" enctype="multipart/form-data" id="uploadForm">
+                            
+                            <!-- File Upload Area -->
+                            <div class="upload-area" id="uploadArea">
+                                <i class="bi bi-cloud-upload display-1 text-primary mb-3"></i>
+                                <h5>Drag & Drop your file here</h5>
+                                <p class="text-muted">or click to browse</p>
+                                <input type="file" name="file" id="fileInput" class="d-none" accept="*/*" multiple>
+                                <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                                    Choose File
+                                </button>
+                            </div>
+
+                            <!-- File Info -->
+                            <div class="file-info" id="fileInfo">
+                                <div class="alert alert-info mb-0">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-file-earmark me-2 mt-1"></i>
+                                        <div style="min-width:0;">
+                                            <ul id="fileList" class="mb-1 ps-3" style="word-break:break-all;"></ul>
+                                            <small id="totalSize"></small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Upload Options -->
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <label for="maxDownloads" class="form-label">Maximum Downloads</label>
+                                    <input type="number" class="form-control" id="maxDownloads" th:field="*{maxDownloads}" 
+                                           min="1" max="100" value="1">
+                                    <div class="form-text">Set to 0 for unlimited downloads</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="expiryHours" class="form-label">Expiry Time (hours)</label>
+                                    <input type="number" class="form-control" id="expiryHours" th:field="*{expiryHours}" 
+                                           min="1" max="168" value="24">
+                                    <div class="form-text">Set to 0 for no expiry</div>
+                                </div>
+                            </div>
+
+                            <!-- Progress Bar -->
+                            <div class="progress mt-3" id="progressBar">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                     role="progressbar" style="width: 0%"></div>
+                            </div>
+
+                            <!-- Upload Button -->
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg" id="uploadBtn" disabled>
+                                    <i class="bi bi-cloud-upload me-2"></i>Upload File
+                                </button>
+                            </div>
+
+                            <!-- Error Messages -->
+                            <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger mt-3">
+                                <ul class="mb-0">
+                                    <li th:each="error : ${#fields.errors('*')}" th:text="${error}"></li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- File Size Limit Info -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h6><i class="bi bi-info-circle me-2"></i>Upload Guidelines</h6>
+                        <ul class="mb-0">
+                            <li>Maximum file size: <strong>1GB</strong></li>
+                            <li>All file types are supported</li>
+                            <li>Files are stored securely in the cloud</li>
+                            <li>Download links expire based on your settings</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileList = document.getElementById('fileList');
+        const totalSize = document.getElementById('totalSize');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressBarInner = progressBar.querySelector('.progress-bar');
+        const uploadForm = document.getElementById('uploadForm');
+
+        // Allowed file types (optional, e.g. images/pdf/zip)
+        const allowedTypes = [
+            'image/', 'application/pdf', 'application/zip', 'application/x-zip-compressed', 'text/', 'video/', 'audio/'
+        ];
+
+        // File input change handler
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleDrop);
+
+        // Click to upload
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            if (files.length > 0) {
+                displayFileInfo(files);
+            } else {
+                hideFileInfo();
+            }
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            uploadArea.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.preventDefault();
+            uploadArea.classList.remove('dragover');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = event.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                displayFileInfo(files);
+            } else {
+                hideFileInfo();
+            }
+        }
+
+        function displayFileInfo(files) {
+            let allValid = true;
+            let totalBytes = 0;
+            fileList.innerHTML = '';
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                // Validate file size (1GB = 1024 * 1024 * 1024 bytes)
+                const maxSize = 1024 * 1024 * 1024;
+                if (file.size > maxSize) {
+                    showError('File size cannot exceed 1GB: ' + file.name);
+                    allValid = false;
+                    continue;
+                }
+                if (!isAllowedType(file)) {
+                    showError('File type not allowed: ' + file.name);
+                    allValid = false;
+                    continue;
+                }
+                const li = document.createElement('li');
+                li.textContent = file.name + ' (' + formatFileSize(file.size) + ')';
+                fileList.appendChild(li);
+                totalBytes += file.size;
+            }
+            if (files.length > 0) {
+                fileInfo.style.display = 'block';
+                totalSize.textContent = 'Total size: ' + formatFileSize(totalBytes);
+            } else {
+                hideFileInfo();
+            }
+            uploadBtn.disabled = !allValid || files.length === 0;
+            if (allValid) clearError();
+        }
+
+        function hideFileInfo() {
+            fileInfo.style.display = 'none';
+            fileList.innerHTML = '';
+            totalSize.textContent = '';
+            uploadBtn.disabled = true;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function isAllowedType(file) {
+            if (!file.type) return true; // allow if type is unknown
+            return allowedTypes.some(type => file.type.startsWith(type));
+        }
+
+        // Error display helpers
+        function showError(msg) {
+            let errorDiv = document.getElementById('clientError');
+            if (!errorDiv) {
+                errorDiv = document.createElement('div');
+                errorDiv.id = 'clientError';
+                errorDiv.className = 'alert alert-danger mt-3';
+                uploadForm.insertBefore(errorDiv, uploadForm.firstChild);
+            }
+            errorDiv.textContent = msg;
+        }
+        function clearError() {
+            const errorDiv = document.getElementById('clientError');
+            if (errorDiv) errorDiv.remove();
+        }
+
+        // AJAX upload with progress
+        uploadForm.addEventListener('submit', function(e) {
+            const files = fileInput.files;
+            if (files.length === 0) {
+                e.preventDefault();
+                showError('Please select a file to upload');
+                return;
+            }
+            clearError();
+            e.preventDefault();
+            progressBar.style.display = 'block';
+            progressBarInner.style.width = '0%';
+            uploadBtn.disabled = true;
+            uploadBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Uploading...';
+
+            const formData = new FormData(uploadForm);
+            for (let i = 0; i < files.length; i++) {
+                formData.append('file', files[i]);
+            }
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', uploadForm.action, true);
+            xhr.upload.onprogress = function(event) {
+                if (event.lengthComputable) {
+                    const percent = Math.round((event.loaded / event.total) * 100);
+                    progressBarInner.style.width = percent + '%';
+                    progressBarInner.textContent = percent + '%';
+                }
+            };
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    // Redirect to success page (server returns HTML)
+                    document.open();
+                    document.write(xhr.responseText);
+                    document.close();
+                } else {
+                    showError('Upload failed: ' + xhr.statusText);
+                    progressBar.style.display = 'none';
+                    uploadBtn.disabled = false;
+                    uploadBtn.innerHTML = '<i class="bi bi-cloud-upload me-2"></i>Upload File';
+                }
+            };
+            xhr.onerror = function() {
+                showError('Network error during upload.');
+                progressBar.style.display = 'none';
+                uploadBtn.disabled = false;
+                uploadBtn.innerHTML = '<i class="bi bi-cloud-upload me-2"></i>Upload File';
+            };
+            xhr.send(formData);
+        });
+    </script>
+</body>
+</html> 

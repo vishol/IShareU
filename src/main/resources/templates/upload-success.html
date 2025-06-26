@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Success - File Sharing</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/jpeg" href="/ishareu_logo.jpg">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+        .card, .card-header {
+            border-radius: 18px !important;
+        }
+        .card {
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        }
+        .card-header {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-weight: 600;
+            border-bottom: none;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            font-weight: 600;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #764ba2 0%, #667eea 100%);
+        }
+        .success-card {
+            border-left: 5px solid #28a745;
+        }
+        .download-link {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        .copy-btn {
+            transition: all 0.3s ease;
+        }
+        .copy-btn:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/navbar.html :: navbar}"></div>
+
+    <!-- Main Content -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <!-- Success Message -->
+                <div class="card success-card shadow mb-4">
+                    <div class="card-body text-center">
+                        <i class="bi bi-check-circle-fill text-success display-1 mb-3"></i>
+                        <h2 class="text-success mb-3">Upload Successful!</h2>
+                        <p class="lead mb-0">Your file(s) have been uploaded and are ready to share.</p>
+                    </div>
+                </div>
+
+                <!-- Uploaded Files Table -->
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="bi bi-file-earmark me-2"></i>Uploaded Files
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${uploadResponses != null}">
+                            <table class="table table-bordered align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Filename</th>
+                                        <th>Download Link</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="resp : ${uploadResponses}">
+                                        <td th:text="${resp.fileRecord.originalFilename}"></td>
+                                        <td>
+                                            <div class="download-link mb-2">
+                                                <span th:text="${'http://localhost:8080' + resp.downloadUrl}"></span>
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                                <button class="btn btn-primary btn-sm copy-btn" type="button" th:attr="data-link=${'http://localhost:8080' + resp.downloadUrl}" onclick="copyToClipboard(this.getAttribute('data-link'))">
+                                                    <i class="bi bi-clipboard me-2"></i>Copy Link
+                                                </button>
+                                                <a th:href="${resp.downloadUrl}" class="btn btn-success btn-sm" target="_blank">
+                                                    <i class="bi bi-download me-2"></i>Test Download
+                                                </a>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span th:if="${resp.success}" class="badge bg-success">Uploaded</span>
+                                            <span th:if="${!resp.success}" class="badge bg-danger">Error</span>
+                                            <div th:if="${!resp.success}" class="text-danger small mt-1" th:text="${resp.message}"></div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div th:if="${uploadResponses == null}">
+                            <div class="alert alert-info">No files uploaded.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="/file/upload" class="btn btn-primary">
+                        <i class="bi bi-cloud-upload me-2"></i>Upload Another File
+                    </a>
+                    <a href="/" class="btn btn-outline-secondary">
+                        <i class="bi bi-house me-2"></i>Go Home
+                    </a>
+                </div>
+
+                <!-- Security Notice -->
+                <div class="alert alert-info mt-4">
+                    <h6><i class="bi bi-shield-check me-2"></i>Security Information</h6>
+                    <ul class="mb-0">
+                        <li>This link is unique and secure</li>
+                        <li>Anyone with this link can download the file</li>
+                        <li>The link will expire based on your settings</li>
+                        <li>Download count is limited as specified</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function copyToClipboard(link) {
+            navigator.clipboard.writeText(link).then(function() {
+                // Change button text temporarily
+                // Find the button that was clicked
+                const active = document.activeElement;
+                if (active && active.classList.contains('copy-btn')) {
+                    const originalText = active.innerHTML;
+                    active.innerHTML = '<i class="bi bi-check me-2"></i>Copied!';
+                    active.classList.remove('btn-primary');
+                    active.classList.add('btn-success');
+                    setTimeout(function() {
+                        active.innerHTML = originalText;
+                        active.classList.remove('btn-success');
+                        active.classList.add('btn-primary');
+                    }, 1500);
+                }
+            });
+        }
+    </script>
+</body>
+</html> 

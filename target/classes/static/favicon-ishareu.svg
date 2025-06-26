@@ -1,0 +1,11 @@
+<svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ishareu-gradient-nav" x1="0" y1="0" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#667eea"/>
+      <stop offset="1" stop-color="#764ba2"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="40" height="40" rx="12" fill="url(#ishareu-gradient-nav)"/>
+  <path d="M22 13c-4.5 0-8 3.5-8 8 0 4.2 3.2 7.7 7.3 8v-3.1c-2.5-.3-4.2-2.1-4.2-4.5 0-2.6 2-4.5 4.9-4.5s4.9 1.9 4.9 4.5c0 2.4-1.7 4.2-4.2 4.5V29c4.1-.3 7.3-3.8 7.3-8 0-4.5-3.5-8-8-8z" fill="#fff"/>
+  <path d="M22 32a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" fill="#fff"/>
+</svg> 

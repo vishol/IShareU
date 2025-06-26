@@ -1,0 +1,17 @@
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/controller/FileController.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/service/SupabaseStorageService.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/FileSharingApplication.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/config/SupabaseConfig.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/config/AllowedFileTypesProperties.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/repository/UserRepository.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/repository/FileRecordRepository.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/model/FileRecord.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/config/SecurityConfig.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/controller/HomeController.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/service/FileService.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/model/User.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/service/UserService.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/dto/FileUploadRequest.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/controller/AdminController.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/dto/FileDownloadResponse.java
+/Users/vishol/Cursor/FileSharing/src/main/java/com/filesharing/model/UploadResponse.java
