@@ -34,12 +34,6 @@
             font-weight: 400;
             margin-bottom: 2rem;
         }
-        .cta-btns .btn {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin: 0 0.5rem 1rem 0.5rem;
-            padding: 0.75rem 2.2rem;
-        }
         .features {
             background: #fff;
             border-radius: 18px;
@@ -77,8 +71,8 @@
                 IShareU
             </a>
             <div class="d-flex align-items-center ms-auto">
-                <a th:href="@{/login}" class="btn btn-link">Login</a>
-                <a th:href="@{/signup}" class="btn btn-primary ms-2">Sign up</a>
+                <a th:href="@{/login}" class="btn btn-ishareu">Login</a>
+                <a th:href="@{/signup}" class="btn btn-ishareu ms-2">Sign up</a>
             </div>
         </div>
     </nav>
@@ -87,9 +81,9 @@
         <div class="hero-title animate__animated animate__fadeInDown">Share files securely, instantly, and beautifully.</div>
         <div class="hero-subtitle animate__animated animate__fadeInUp">IShareU lets you upload files up to 1GB, generate unique expiring links, and control access with ease.<br>Powered by Java, Spring Boot, PostgreSQL, and Supabase Storage.</div>
         <div class="cta-btns animate__animated animate__fadeInUp">
-            <a th:href="@{/file/upload}" class="btn btn-primary btn-lg me-2"><i class="bi bi-cloud-upload me-2"></i>Try Upload</a>
-            <a th:href="@{/signup}" class="btn btn-outline-light btn-lg me-2">Sign Up</a>
-            <a th:href="@{/login}" class="btn btn-outline-light btn-lg">Login</a>
+            <a th:href="@{/file/upload}" class="btn btn-ishareu btn-lg me-2"><i class="bi bi-cloud-upload me-2"></i>Try Upload</a>
+            <a th:href="@{/signup}" class="btn btn-ishareu btn-lg me-2">Sign Up</a>
+            <a th:href="@{/login}" class="btn btn-ishareu btn-lg">Login</a>
         </div>
     </div>
     <div class="features row mx-0 animate__animated animate__fadeInUp">

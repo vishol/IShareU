@@ -8,80 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="icon" type="image/jpeg" href="/ishareu_logo.jpg">
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
-        }
-        .upload-area {
-            border: 2px dashed #764ba2;
-            border-radius: 10px;
-            padding: 40px;
-            text-align: center;
-            background-color: #f8f9fa;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .upload-area:hover {
-            border-color: #667eea;
-            background-color: #e9ecef;
-        }
-        .upload-area.dragover {
-            border-color: #28a745;
-            background-color: #d4edda;
-        }
-        .file-info {
-            display: none;
-            margin-top: 15px;
-        }
-        .progress {
-            display: none;
-            margin-top: 15px;
-        }
-        .card, .card-header {
-            border-radius: 18px !important;
-        }
-        .card {
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-        }
-        .card-header {
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            font-weight: 600;
-            border-bottom: none;
-        }
-        .btn-primary {
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            font-weight: 600;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(90deg, #764ba2 0%, #667eea 100%);
-        }
-        @media (max-width: 576px) {
-            .upload-area {
-                padding: 18px;
-                font-size: 1rem;
-            }
-            .file-info {
-                font-size: 0.95rem;
-            }
-            .card {
-                padding: 0.5rem;
-            }
-            .btn, .btn-lg {
-                font-size: 1rem;
-                padding: 0.75rem 1rem;
-            }
-        }
-        .file-info {
-            transition: opacity 0.3s;
-        }
-        .progress {
-            transition: opacity 0.3s;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/ishareu.css}" />
 </head>
 <body>
     <div th:replace="~{fragments/navbar.html :: navbar}"></div>
@@ -105,7 +32,7 @@
                                 <h5>Drag & Drop your file here</h5>
                                 <p class="text-muted">or click to browse</p>
                                 <input type="file" name="file" id="fileInput" class="d-none" accept="*/*" multiple>
-                                <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                                <button type="button" class="btn btn-ishareu" onclick="document.getElementById('fileInput').click()">
                                     Choose File
                                 </button>
                             </div>
@@ -147,7 +74,7 @@
 
                             <!-- Upload Button -->
                             <div class="d-grid gap-2 mt-4">
-                                <button type="submit" class="btn btn-primary btn-lg" id="uploadBtn" disabled>
+                                <button type="submit" class="btn btn-ishareu btn-lg" id="uploadBtn" disabled>
                                     <i class="bi bi-cloud-upload me-2"></i>Upload File
                                 </button>
                             </div>

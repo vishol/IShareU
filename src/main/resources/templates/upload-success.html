@@ -94,7 +94,7 @@
                                                 <span th:text="${'http://localhost:8080' + resp.downloadUrl}"></span>
                                             </div>
                                             <div class="d-flex gap-2">
-                                                <button class="btn btn-primary btn-sm copy-btn" type="button" th:attr="data-link=${'http://localhost:8080' + resp.downloadUrl}" onclick="copyToClipboard(this.getAttribute('data-link'))">
+                                                <button class="btn btn-ishareu btn-sm copy-btn" type="button" th:attr="data-link=${'http://localhost:8080' + resp.downloadUrl}" onclick="copyToClipboard(this.getAttribute('data-link'))">
                                                     <i class="bi bi-clipboard me-2"></i>Copy Link
                                                 </button>
                                                 <a th:href="${resp.downloadUrl}" class="btn btn-success btn-sm" target="_blank">
