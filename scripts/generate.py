@@ -63,20 +63,3 @@ with open("docs/runbook.html", "w") as f:
 
 print("✅ Runbook successfully generated at docs/runbook.html")
 ```
-
-And your `requirements.txt` should contain just one line:
-```
-openai
-```
-
-So your final repo structure should look like this:
-```
-your-repo/
-├── .github/
-│   └── workflows/
-│       └── generate-runbook.yml
-├── docs/
-│   └── runbook.html        ← auto-generated every Monday
-├── package.json            ← your input data
-├── generate.py             ← the script above
-└── requirements.txt        ← openai dependency
