@@ -3,11 +3,14 @@ name: Generate Runbook
 on:
   schedule:
     - cron: "0 2 * * 1"   # every Monday 2 AM
-  workflow_dispatch:      # allows manual trigger
+  workflow_dispatch:       # allows manual trigger
 
 jobs:
   generate-runbook:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -28,10 +31,38 @@ jobs:
         run: |
           python scripts/generate.py
 
-      - name: Commit runbook
+      - name: Create new branch and commit runbook
+        id: create_branch
         run: |
+          BRANCH_NAME="runbook/auto-$(date +'%Y-%m-%d')"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
           git config --global user.name "runbook-bot"
           git config --global user.email "runbook-bot@users.noreply.github.com"
+          git checkout -b $BRANCH_NAME
           git add docs/runbooks/*.html
-          git commit -m "Auto-generated weekly runbook" || echo "No changes"
-          git push
+          git commit -m "Auto-generated weekly runbook $(date +'%Y-%m-%d')" || echo "No changes"
+          git push origin $BRANCH_NAME
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.create_branch.outputs.branch_name }}
+          base: main
+          title: "📋 Weekly Runbook - $(date +'%Y-%m-%d')"
+          body: |
+            ## 📋 Auto-Generated Weekly Runbook
+            
+            This PR was automatically created by the runbook generator bot.
+            
+            **Generated on:** $(date +'%Y-%m-%d')  
+            **Triggered by:** Scheduled workflow (every Monday 2 AM UTC)
+            
+            ### Changes
+            - Updated `docs/runbooks/*.html` with the latest runbook
+            
+            Please review and merge if everything looks good. ✅
+          labels: |
+            runbook
+            automated
+          assignees: ${{ github.repository_owner }}
