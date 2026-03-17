@@ -86,6 +86,8 @@ response = client.chat.completions.create(
 # ── 5. Save runbook ───────────────────────────────────────────────────────────
 html_content = response.choices[0].message.content
 
+print(f"📄 HTML Content Preview:\n{html_content[:500]}...")
+
 # Strip markdown code fences if present
 if html_content.startswith("```"):
     html_content = html_content.split("```")[1]
