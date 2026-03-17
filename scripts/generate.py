@@ -94,6 +94,7 @@ response = client.chat.completions.create(
 
 # ── 5. Save runbook ───────────────────────────────────────────────────────────
 html_content = response.choices[0].message.content
+print(f"📄 Raw response size: {len(html_content)} characters ({len(html_content.encode('utf-8')) / (1024 * 1024):.2f} MB)")
 
 # Strip markdown code fences if present
 if html_content.startswith("```"):
