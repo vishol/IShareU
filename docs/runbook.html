@@ -1,1 +1,105 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Runbook for runbook-generator v1.0.0</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        h1 {
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 10px;
+        }
+        h2 {
+            margin-top: 20px;
+        }
+        p, ul {
+            margin: 10px 0;
+        }
+        ul {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+        .date {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Runbook for runbook-generator v1.0.0</h1>
+    <p class="date">Generated on: 2026-03-17</p>
+
+    <h2>1. Architecture Overview</h2>
+    <p>The <strong>runbook-generator</strong> application is designed for automated runbook generation. It is structured around a primary script and a key dependency:</p>
+    <ul>
+        <li><strong>Scripts:</strong>
+            <ul>
+                <li><code>generate</code>: Executes the script located at <code>scripts/generate-runbook.js</code> using Node.js.</li>
+            </ul>
+        </li>
+        <li><strong>Dependencies:</strong>
+            <ul>
+                <li><code>@anthropic-ai/sdk</code> version <code>^0.20.0</code>: This SDK is essential for leveraging AI capabilities within the application.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>2. Prerequisites</h2>
+    <p>Ensure the following tools and environment are set up before deploying the application:</p>
+    <ul>
+        <li>Node.js version 14.x or higher</li>
+        <li>NPM version 6.x or higher</li>
+        <li>Access to a terminal or command line interface</li>
+        <li>Internet connection for dependency installation</li>
+    </ul>
+
+    <h2>3. Deployment Steps</h2>
+    <p>Follow these steps to deploy the <strong>runbook-generator</strong> application:</p>
+    <ul>
+        <li>Clone the repository from the source control.</li>
+        <li>Navigate to the application directory in your terminal.</li>
+        <li>Run <code>npm install</code> to install all necessary dependencies.</li>
+        <li>Execute <code>npm run generate</code> to start the runbook generation process.</li>
+    </ul>
+
+    <h2>4. Rollback Procedures</h2>
+    <p>If you need to roll back to a previous version, follow these steps:</p>
+    <ul>
+        <li>Identify the last stable commit or version tag in your version control system.</li>
+        <li>Checkout the identified commit or tag using <code>git checkout [commit/tag]</code>.</li>
+        <li>Run <code>npm install</code> to ensure all dependencies match the rollback version.</li>
+        <li>Verify the application functionality by running <code>npm run generate</code>.</li>
+    </ul>
+
+    <h2>5. Troubleshooting Guide</h2>
+    <p>Here are some common issues and their resolutions:</p>
+    <ul>
+        <li><strong>Issue:</strong> <code>npm install</code> fails due to network issues.
+            <ul>
+                <li><strong>Solution:</strong> Check your internet connection and try running <code>npm install</code> again.</li>
+            </ul>
+        </li>
+        <li><strong>Issue:</strong> <code>npm run generate</code> throws a module not found error.
+            <ul>
+                <li><strong>Solution:</strong> Ensure all dependencies are installed correctly by running <code>npm install</code>.</li>
+            </ul>
+        </li>
+        <li><strong>Issue:</strong> Unexpected behavior during runbook generation.
+            <ul>
+                <li><strong>Solution:</strong> Check the logs for any errors and verify the integrity of <code>scripts/generate-runbook.js</code>.</li>
+            </ul>
+        </li>
+    </ul>
+
+</body>
+</html>
