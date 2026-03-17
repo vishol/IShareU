@@ -14,14 +14,15 @@ scripts     = package_data.get("scripts", {})
 dependencies = package_data.get("dependencies", {})
 
 # ── 2. Crawl codebase ─────────────────────────────────────────────────────────
-INCLUDE_EXTENSIONS = {".py", ".js", ".ts", ".jsx", ".tsx", ".json", ".yaml", ".yml", ".env.example", ".sh"}
+INCLUDE_EXTENSIONS = {".py", ".js", ".ts", ".jsx", ".tsx", ".yaml", ".yml", ".sh"}
 EXCLUDE_DIRS       = {"node_modules", ".git", "__pycache__", ".venv", "venv", "dist", "build", "docs"}
-MAX_FILE_SIZE_KB   = 50  # skip files larger than 50KB to avoid token limits
+MAX_FILE_SIZE_KB   = 20   # reduced from 50KB to 20KB per file
+MAX_TOTAL_CHARS    = 50000  # hard cap on total codebase characters sent to GPT
 
 def read_codebase(root="."):
     files_content = []
+    total_chars = 0
     for dirpath, dirnames, filenames in os.walk(root):
-        # Skip excluded directories
         dirnames[:] = [d for d in dirnames if d not in EXCLUDE_DIRS]
         for filename in filenames:
             ext = os.path.splitext(filename)[1]
@@ -30,12 +31,18 @@ def read_codebase(root="."):
             filepath = os.path.join(dirpath, filename)
             size_kb = os.path.getsize(filepath) / 1024
             if size_kb > MAX_FILE_SIZE_KB:
+                print(f"⏭️ Skipping large file: {filepath} ({size_kb:.1f}KB)")
                 continue
             try:
                 with open(filepath, "r", encoding="utf-8", errors="ignore") as f:
                     content = f.read()
+                # Stop if we hit total character limit
+                if total_chars + len(content) > MAX_TOTAL_CHARS:
+                    print(f"⚠️ Total character limit reached, stopping codebase scan")
+                    return "\n\n".join(files_content)
                 relative_path = os.path.relpath(filepath, root)
                 files_content.append(f"### File: {relative_path}\n```\n{content}\n```")
+                total_chars += len(content)
             except Exception as e:
                 print(f"⚠️ Could not read {filepath}: {e}")
     return "\n\n".join(files_content)
