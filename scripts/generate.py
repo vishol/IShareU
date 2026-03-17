@@ -62,4 +62,3 @@ with open("docs/runbook.html", "w") as f:
     f.write(html_content)
 
 print("✅ Runbook successfully generated at docs/runbook.html")
-```
