@@ -94,7 +94,6 @@ response = client.chat.completions.create(
 
 # ── 5. Save runbook ───────────────────────────────────────────────────────────
 html_content = response.choices[0].message.content
-print(f"📄 HTML Content Preview:\n{html_content[:5000]}...")
 
 # Strip markdown code fences if present
 if html_content.startswith("```"):
@@ -102,9 +101,23 @@ if html_content.startswith("```"):
     if html_content.startswith("html"):
         html_content = html_content[4:]
 
+# ── Hard truncate if still too large (safety net) ────────────────────────────
+MAX_OUTPUT_CHARS = 500_000  # ~500KB
+if len(html_content) > MAX_OUTPUT_CHARS:
+    print(f"⚠️ Output too large ({len(html_content)} chars), truncating...")
+    html_content = html_content[:MAX_OUTPUT_CHARS] + "\n</body></html>"
+
 os.makedirs("docs/runbooks", exist_ok=True)
 output_path = f"docs/runbooks/runbook-{datetime.now().strftime('%Y-%m-%d')}.html"
 with open(output_path, "w") as f:
     f.write(html_content)
+
+# ── Check final file size ─────────────────────────────────────────────────────
+file_size_mb = os.path.getsize(output_path) / (1024 * 1024)
+print(f"📦 Runbook file size: {file_size_mb:.2f} MB")
+if file_size_mb > 50:
+    print("❌ ERROR: Runbook is still over 50MB — aborting to prevent GitHub push failure")
+    os.remove(output_path)
+    exit(1)
 
 print(f"✅ Runbook successfully generated at {output_path}")
