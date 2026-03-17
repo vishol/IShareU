@@ -1,9 +1,17 @@
-name: Generate Runbook
+name: Generate weekly runbook (HTML)
 
 on:
   schedule:
-    - cron: "0 2 * * 1"   # every Monday 2 AM
-  workflow_dispatch:      # allows manual trigger
+    # Every Monday at 02:15 UTC (adjust as needed)
+    - cron: "15 2 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write # needed to commit/push back to the repo
+
+concurrency:
+  group: runbook-weekly
+  cancel-in-progress: false
 
 jobs:
   generate-runbook:
@@ -13,25 +21,50 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          pip install openai
-
-      - name: Generate runbook
+      - name: Generate runbook HTML via Spark Assist
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          # Store this in GitHub: Settings -> Secrets and variables -> Actions -> New repository secret
+          SPARK_ASSIST_API_KEY: ${{ secrets.SPARK_ASSIST_API_KEY }}
+          # Optional: keep the endpoint configurable as a variable/secret too
+          SPARK_ASSIST_ENDPOINT: ${{ secrets.SPARK_ASSIST_ENDPOINT }}
         run: |
-          python scripts/generate_runbook.py
+          set -euo pipefail
 
-      - name: Commit runbook
+          mkdir -p docs/runbooks
+          OUT="docs/runbooks/runbook.html"
+
+          # ---- Your prompt (replace with your real runbook prompt) ----
+          PROMPT=$'Generate an application runbook in HTML.\n\nRequirements:\n- Include architecture diagram section (Mermaid is okay if embedded)\n- Basic description of the application\n- Dependencies, on-call notes, alerts, dashboards\n- Troubleshooting steps\n- Output MUST be valid standalone HTML (one file)\n'
+
+          # ---- Call Spark Assist (adjust request format to your Spark Assist API) ----
+          # IMPORTANT: Do not echo secrets. GitHub masks secrets in logs, but avoid printing them anyway.
+          #
+          # This block assumes the API returns JSON like: { "html": "<!doctype html>..." }
+          # If your API returns raw HTML, replace the jq extraction accordingly.
+          curl -sS -X POST "${SPARK_ASSIST_ENDPOINT}" \
+            -H "Authorization: Bearer ${SPARK_ASSIST_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d "$(jq -n --arg prompt "$PROMPT" '{prompt: $prompt, format: "html"}')" \
+            | jq -r '.html' > "$OUT"
+
+          # Basic sanity check: ensure we got an HTML-ish document
+          grep -qi "<html" "$OUT"
+
+      - name: Commit and push runbook if changed
         run: |
-          git config --global user.name "runbook-bot"
-          git config --global user.email "runbook-bot@users.noreply.github.com"
-          git add docs/runbooks/*.html
-          git commit -m "Auto-generated weekly runbook" || echo "No changes"
+          set -euo pipefail
+
+          # Configure author for the commit
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add docs/runbooks/runbook.html
+
+          # Only commit if there are changes
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore(runbook): weekly runbook update"
           git push
