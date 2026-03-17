@@ -1,38 +1,37 @@
-import os
+name: Generate Runbook
 
-# spark-assist (replace OpenAI usage)
-from spark_assist import SparkAssist  # spark-assist library
+on:
+  schedule:
+    - cron: "0 2 * * 1"   # every Monday 2 AM
+  workflow_dispatch:      # allows manual trigger
 
-# Create Spark client (API key provided via env var)
-client = SparkAssist(api_key=os.getenv("SPARK_API_KEY"))
+jobs:
+  generate-runbook:
+    runs-on: ubuntu-latest
 
-# Read prompt template
-with open("prompts/runbook_prompt.md", "r", encoding="utf-8") as f:
-    prompt = f.read()
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-# Collect repository file list (basic example)
-repo_files = ""
-for root, dirs, files in os.walk("src"):
-    for file in files:
-        repo_files += f"{root}/{file}\n"
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-final_prompt = prompt + "\nRepository Files:\n" + repo_files
+      - name: Install dependencies
+        run: |
+          pip install openai
 
-# Generate runbook with Spark Assist
-# Note: parameter names may differ slightly depending on your spark-assist version.
-result = client.generate(
-    system="You are a senior SRE",
-    prompt=final_prompt,
-    # model="...",  # optional: set if your Spark deployment uses model names
-    # temperature=0.2,  # optional
-)
+      - name: Generate runbook
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python scripts/generate_runbook.py
 
-# Normalize output (depending on SDK return type)
-html_output = result["content"] if isinstance(result, dict) else str(result)
-
-os.makedirs("docs/runbooks", exist_ok=True)
-
-with open("docs/runbooks/application_runbook.html", "w", encoding="utf-8") as f:
-    f.write(html_output)
-
-print("Runbook generated successfully")
+      - name: Commit runbook
+        run: |
+          git config --global user.name "runbook-bot"
+          git config --global user.email "runbook-bot@users.noreply.github.com"
+          git add docs/runbooks/*.html
+          git commit -m "Auto-generated weekly runbook" || echo "No changes"
+          git push
