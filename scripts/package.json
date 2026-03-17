@@ -1,12 +1,12 @@
 {
   "name": "runbook-generator",
   "version": "1.0.0",
-  "description": "Automated runbook generation",
-  "main": "scripts/generate-runbook.js",
+  "description": "Auto-generate runbook using OpenAI",
+  "main": "generate.js",
   "scripts": {
-    "generate": "node scripts/generate-runbook.js"
+    "generate": "node generate.js"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.20.0"
+    "openai": "^4.28.0"
   }
 }
