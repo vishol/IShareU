@@ -2,11 +2,20 @@
   "name": "runbook-generator",
   "version": "1.0.0",
   "description": "Auto-generate runbook using OpenAI",
-  "main": "generate.js",
+  "main": "generate.py",
   "scripts": {
-    "generate": "node generate.js"
+    "generate": "python generate.py",
+    "start": "python generate.py"
   },
+  "keywords": [
+    "runbook",
+    "openai",
+    "automation",
+    "documentation"
+  ],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "openai": "^4.28.0"
+    "openai": "^1.0.0"
   }
 }
