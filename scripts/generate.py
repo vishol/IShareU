@@ -67,8 +67,8 @@ The runbook must include the following sections:
 5. Troubleshooting Guide - common issues based on the actual code and how to resolve them
 
 Output ONLY valid HTML with inline CSS styling. Make it clean, readable, and professional.
-Limit output to 10MB file.
-Use mermaid for diagrams.
+Keep the output concise and under 500KB.
+Do NOT include large inline data, base64 images, or repeated content.
 Include the generation date: {datetime.now().strftime('%Y-%m-%d')}.
 """
 
