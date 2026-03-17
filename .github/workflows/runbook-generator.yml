@@ -1,8 +1,6 @@
 name: Generate Runbook
 
 on:
-  schedule:
-    - cron: "0 2 * * 1"   # every Monday 2 AM
   workflow_dispatch:       # allows manual trigger
 
 jobs:
