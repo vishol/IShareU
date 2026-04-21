@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IShareU Runbook</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #f3f7fb;
+      --panel: #ffffff;
+      --ink: #17324d;
+      --muted: #59738e;
+      --accent: #0b6efd;
+      --accent-2: #11a36a;
+      --line: #d7e3ef;
+      --warn: #c57c00;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(180deg, #eaf2fa 0%, var(--bg) 220px);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 32px 20px 60px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0e3a5f, #1564a2 58%, #1f8f73);
+      color: #fff;
+      border-radius: 24px;
+      padding: 32px;
+      box-shadow: 0 20px 45px rgba(18, 54, 87, 0.2);
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: 2.3rem;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 900px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      font-size: 0.92rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .card {
+      grid-column: span 12;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 8px 24px rgba(33, 60, 86, 0.07);
+    }
+
+    .card.half {
+      grid-column: span 6;
+    }
+
+    .card.third {
+      grid-column: span 4;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 1.35rem;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+    }
+
+    p, li {
+      color: var(--ink);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    ul, ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    li + li {
+      margin-top: 8px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #eff6fc;
+      font-weight: 600;
+    }
+
+    .callout {
+      border-left: 4px solid var(--accent);
+      background: #eef6ff;
+      padding: 12px 14px;
+      border-radius: 12px;
+      color: var(--ink);
+    }
+
+    .warn {
+      border-left-color: var(--warn);
+      background: #fff7e8;
+    }
+
+    .stack-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .stack-item {
+      background: #f8fbfe;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+
+    .mermaid {
+      overflow-x: auto;
+    }
+
+    footer {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 0.92rem;
+      text-align: right;
+    }
+
+    @media (max-width: 900px) {
+      .card.half,
+      .card.third {
+        grid-column: span 12;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <h1>Application Name: IShareU</h1>
+      <p>Runbook for the Spring Boot file-sharing application currently checked out in this repository. The app manages authenticated uploads, public link-based downloads, metadata persistence in PostgreSQL, and binary storage through Supabase Storage.</p>
+      <div class="meta">
+        <div class="pill">Generated from repository state on 2026-04-20</div>
+        <div class="pill">Artifact: <code>runbooks/ishareu-runbook.html</code></div>
+        <div class="pill">Deployment profile: Spring Boot + PostgreSQL + Supabase Storage</div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="card half">
+        <h2>Application Description</h2>
+        <p>IShareU is a web-based SaaS file-sharing application. Registered users can upload one or more files, define expiry and max-download rules, and share generated public links. Recipients access a landing download page and are then redirected to a short-lived signed URL generated from Supabase Storage.</p>
+      </section>
+
+      <section class="card half">
+        <h2>Core Processing Capabilities</h2>
+        <ul>
+          <li>User registration, login, and role-based admin access through Spring Security.</li>
+          <li>Multi-file upload with size checks, allow-list validation, and per-IP upload rate limiting.</li>
+          <li>Public link-based file access with expiry enforcement, max-download enforcement, and per-IP download rate limiting.</li>
+          <li>File metadata persistence in PostgreSQL through Spring Data JPA.</li>
+          <li>Cloud object upload and signed download URL generation through Supabase Storage REST APIs.</li>
+          <li>Admin dashboards for user and file searches, pagination, and record deletion.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Application Overview</h2>
+        <p>The application follows a conventional Spring MVC layout. Browser requests hit Thymeleaf-backed controllers, business logic is handled in service classes, file metadata is stored in PostgreSQL via JPA repositories, and file binaries live in a Supabase bucket. Security rules allow public access to home, health, and download pages while requiring authentication for uploads and admin privileges for `/admin/**` endpoints.</p>
+        <div class="callout">Primary runtime flow: browser -> controller -> service -> repository and Supabase Storage -> Thymeleaf view or redirect.</div>
+      </section>
+
+      <section class="card">
+        <h2>Architecture Diagram</h2>
+        <div class="mermaid">
+flowchart LR
+    U["End User / Admin"] --> W["Thymeleaf Web UI"]
+    W --> C["Spring MVC Controllers"]
+    C --> S["Service Layer"]
+    S --> R["Spring Data JPA Repositories"]
+    R --> P["PostgreSQL"]
+    S --> SB["Supabase Storage Service"]
+    SB --> SS["Supabase Storage Bucket"]
+    C --> SEC["Spring Security"]
+    SEC --> US["UserService / UserDetailsService"]
+    US --> UR["UserRepository"]
+    C --> ACT["Actuator Endpoints"]
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Sequence Diagram</h2>
+        <div class="mermaid">
+sequenceDiagram
+    participant User
+    participant Browser
+    participant FileController
+    participant UserService
+    participant SupabaseStorageService
+    participant FileService
+    participant PostgreSQL
+    participant Supabase
+
+    User->>Browser: Upload file(s) with expiry/max downloads
+    Browser->>FileController: POST /file/upload
+    FileController->>FileController: Apply IP rate limit and validate file list
+    FileController->>UserService: Resolve authenticated user
+    FileController->>SupabaseStorageService: uploadFile(file)
+    SupabaseStorageService->>Supabase: Store object
+    Supabase-->>SupabaseStorageService: stored filename
+    FileController->>FileService: saveFileRecord(metadata)
+    FileService->>PostgreSQL: INSERT file_records
+    PostgreSQL-->>FileService: saved record with unique link
+    FileService-->>FileController: saved file record
+    FileController-->>Browser: upload-success page with download link
+    User->>Browser: Open public download link
+    Browser->>FileController: GET /file/download/{uniqueLink}/file
+    FileController->>FileService: findByUniqueLink(uniqueLink)
+    FileService->>PostgreSQL: SELECT file record
+    PostgreSQL-->>FileService: metadata
+    FileController->>SupabaseStorageService: generateSignedUrl(storedFilename)
+    SupabaseStorageService->>Supabase: create signed URL
+    Supabase-->>SupabaseStorageService: temporary download URL
+    FileController->>FileService: incrementDownloadCount(id)
+    FileService->>PostgreSQL: UPDATE download_count
+    FileController-->>Browser: redirect to signed URL
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Processing Steps</h2>
+        <ol>
+          <li>User signs up or logs in through Spring Security form login.</li>
+          <li>Authenticated user opens `/file/upload` and submits one or more files.</li>
+          <li>`FileController` enforces per-IP bucket limits, validates file size and extension/content type against the configured allow-list, and resolves the current user.</li>
+          <li>`SupabaseStorageService` uploads each accepted file to the configured Supabase bucket and returns a generated storage filename.</li>
+          <li>`FileController` builds a `FileRecord` with original filename, storage key, generated unique link, expiry, ownership, and max-download metadata, then persists it through `FileService`.</li>
+          <li>The upload-success page displays generated public links.</li>
+          <li>When a recipient opens the link, the app verifies that the record exists, is active, is not expired, and has not exceeded the download limit.</li>
+          <li>The app generates a one-hour signed URL from Supabase Storage, increments the download count, and redirects the recipient to the object store.</li>
+          <li>A scheduled cleanup job runs hourly and deactivates expired or download-limit-reached records.</li>
+          <li>Admins can review aggregate stats, search users/files, and delete records from dedicated admin pages.</li>
+        </ol>
+      </section>
+
+      <section class="card">
+        <h2>Technology Stack</h2>
+        <div class="stack-list">
+          <div class="stack-item"><strong>Backend</strong><br>Java 17, Spring Boot 3.2.0, Spring MVC</div>
+          <div class="stack-item"><strong>Security</strong><br>Spring Security, BCrypt, role-based access control</div>
+          <div class="stack-item"><strong>Persistence</strong><br>Spring Data JPA, PostgreSQL, Hibernate DDL update</div>
+          <div class="stack-item"><strong>Storage</strong><br>Supabase Storage via Apache HttpClient 5 REST calls</div>
+          <div class="stack-item"><strong>Frontend</strong><br>Thymeleaf templates, Bootstrap 5, custom CSS, JavaScript</div>
+          <div class="stack-item"><strong>Ops</strong><br>Spring Boot Actuator, Dockerfile, Fly.io config</div>
+          <div class="stack-item"><strong>Controls</strong><br>Bucket4j rate limiting, scheduled cleanup job</div>
+        </div>
+      </section>
+
+      <section class="card half">
+        <h2>Division Group Family L1_Product Product Manager Scrum Team</h2>
+        <table>
+          <tr>
+            <th>Field</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>Division</td>
+            <td>Not specified in repository</td>
+          </tr>
+          <tr>
+            <td>Group</td>
+            <td>Not specified in repository</td>
+          </tr>
+          <tr>
+            <td>Family</td>
+            <td>File Sharing / Collaboration</td>
+          </tr>
+          <tr>
+            <td>L1_Product</td>
+            <td>IShareU</td>
+          </tr>
+          <tr>
+            <td>Product Manager</td>
+            <td>Not specified in repository</td>
+          </tr>
+          <tr>
+            <td>Scrum Team</td>
+            <td>Not specified in repository</td>
+          </tr>
+        </table>
+      </section>
+
+      <section class="card half">
+        <h2>DataSet Code</h2>
+        <table>
+          <tr>
+            <th>Dataset / Store</th>
+            <th>Purpose</th>
+            <th>Repository Evidence</th>
+          </tr>
+          <tr>
+            <td><code>users</code></td>
+            <td>User identities, credentials, role flag, created timestamp</td>
+            <td><code>User</code> JPA entity</td>
+          </tr>
+          <tr>
+            <td><code>file_records</code></td>
+            <td>File metadata, ownership, expiry, downloads, unique link</td>
+            <td><code>FileRecord</code> JPA entity</td>
+          </tr>
+          <tr>
+            <td><code>files</code> bucket</td>
+            <td>Binary object storage in Supabase</td>
+            <td><code>supabase.storage.bucket</code> configuration</td>
+          </tr>
+        </table>
+      </section>
+
+      <section class="card third">
+        <h2>Location</h2>
+        <table>
+          <tr>
+            <th>Area</th>
+            <th>Value</th>
+          </tr>
+          <tr>
+            <td>Repository</td>
+            <td><code>/Users/vishol/.codex/worktrees/478f/FileSharing</code></td>
+          </tr>
+          <tr>
+            <td>Remote</td>
+            <td><code>https://github.com/vishol/IShareU.git</code></td>
+          </tr>
+          <tr>
+            <td>Application Port</td>
+            <td><code>8080</code></td>
+          </tr>
+        </table>
+      </section>
+
+      <section class="card third">
+        <h2>Recent Issues Fixed</h2>
+        <ul>
+          <li>Fly.io deployment support was added and later adjusted through recent `fly.toml` commits.</li>
+          <li>The UI and upload workflow were expanded with richer client-side handling and styling changes in the recent feature commit history.</li>
+          <li>Current code includes multi-file upload, link expiry checks, download-limit checks, and admin search/pagination capabilities that were not part of the original foundation-only README.</li>
+        </ul>
+      </section>
+
+      <section class="card third">
+        <h2>Potential Code Improvements</h2>
+        <ul>
+          <li>Move database passwords and Supabase keys out of `application.yml` and into environment variables or a secret manager.</li>
+          <li>Fix the JPA user-to-file mapping so `User.fileRecords` maps through an entity relationship instead of a scalar `userId` field.</li>
+          <li>Add automated controller/service tests; the repository currently has no visible source test coverage.</li>
+          <li>Use transactional soft-delete and storage cleanup together so deleting records also removes or archives stored objects consistently.</li>
+          <li>Replace duplicated unique-link generation logic so controllers and services use one source of truth.</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Operational Notes</h2>
+        <div class="callout warn">
+          The current repository contains live-looking database and Supabase credentials in <code>src/main/resources/application.yml</code>. Treat that as an immediate security risk and rotate those credentials before relying on this deployment.
+        </div>
+      </section>
+    </div>
+
+    <footer>Runbook generated from checked-out repository contents.</footer>
+  </div>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: "default" });
+  </script>
+</body>
+</html>
